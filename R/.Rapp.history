@@ -1,0 +1,70 @@
+dat<-read.csv("/Users/annettemolinaro/Box Sync/Projects/PI/Russ Pieper/Joys Analysis/ALLdata.csv")
+x<-cbind(dat$pkm2.nuc,dat$hur.nuc)
+y<-dat$p27.total
+source("/Users/annettemolinaro/Box Sync/Projects/R01/partDSA/Code (molinaroa@neurosurg.ucsf.edu)/partdsa/pkg/partDSA/R/main.R")
+source("/Users/annettemolinaro/Box Sync/Projects/R01/partDSA/Code (molinaroa@neurosurg.ucsf.edu)/partdsa/pkg/partDSA/R/control.R")
+source("/Users/annettemolinaro/Box Sync/Projects/R01/partDSA/Code (molinaroa@neurosurg.ucsf.edu)/partdsa/pkg/partDSA/R/addon.R")
+source("/Users/annettemolinaro/Box Sync/Projects/R01/partDSA/Code (molinaroa@neurosurg.ucsf.edu)/partdsa/pkg/partDSA/R/algAlone2.R")
+source("/Users/annettemolinaro/Box Sync/Projects/R01/partDSA/Code (molinaroa@neurosurg.ucsf.edu)/partdsa/pkg/partDSA/R/code.2.R")
+source("/Users/annettemolinaro/Box Sync/Projects/R01/partDSA/Code (molinaroa@neurosurg.ucsf.edu)/partdsa/pkg/partDSA/R/delete.R")
+source("/Users/annettemolinaro/Box Sync/Projects/R01/partDSA/Code (molinaroa@neurosurg.ucsf.edu)/partdsa/pkg/partDSA/R/logging.R")
+source("/Users/annettemolinaro/Box Sync/Projects/R01/partDSA/Code (molinaroa@neurosurg.ucsf.edu)/partdsa/pkg/partDSA/R/newfunctions.R")
+source("/Users/annettemolinaro/Box Sync/Projects/R01/partDSA/Code (molinaroa@neurosurg.ucsf.edu)/partdsa/pkg/partDSA/R/showDSA.R")
+source("/Users/annettemolinaro/Box Sync/Projects/R01/partDSA/Code (molinaroa@neurosurg.ucsf.edu)/partdsa/pkg/partDSA/R/subst.R")
+partDSA(x=x,y=y,boost=1,boost.num.trees=10)
+partDSA
+partDSA(x=x,y=y,control=DSA.control(boost=1,boost.num.trees=10))
+partDSA(x=x,y=y,control=DSA.control(boost=1,boost.num.trees=10,cut.off.growth=2))
+partDSA(x=x,y=y,control=DSA.control(boost=1,boost.num.trees=10),cut.off.growth=2)
+DSA.control
+partDSA(x=x,y=y,control=DSA.control(boost=1,boost.num.trees=10,cut.off.growth=2))
+source("/Users/annettemolinaro/Box Sync/Projects/R01/partDSA/Code (molinaroa@neurosurg.ucsf.edu)/partdsa/pkg/partDSA/R/control.R")
+partDSA(x=x,y=y,control=DSA.control(boost=1,boost.num.trees=10,cut.off.growth=2))
+source("/Users/annettemolinaro/Box Sync/Projects/R01/partDSA/Code (molinaroa@neurosurg.ucsf.edu)/partdsa/pkg/partDSA/R/main.R")
+partDSA
+partDSA(x=x,y=y,control=DSA.control(boost=1,boost.num.trees=10,cut.off.growth=2))
+DSA.control(boost=1,boost.num.trees=10,cut.off.growth=2)
+source("/Users/annettemolinaro/Box Sync/Projects/R01/partDSA/Code (molinaroa@neurosurg.ucsf.edu)/partdsa/pkg/partDSA/R/main.R")
+partDSA(x=x,y=y,control=DSA.control(boost=1,boost.num.trees=10,cut.off.growth=2))
+try.this<-partDSA(x=x,y=y,control=DSA.control(boost=1,boost.num.trees=100,cut.off.growth=2))
+try.this
+plot(x=c(1:100),try.this$Test.Set.Errors)
+library(partDSA)
+help(partDSA)
+data.j<-read.csv(file="JMPDataJan2013.May.NoGene.csv")#
+dim(data.j)#
+data.j[1,]#
+#
+apply(is.na(data.j),2,sum)#
+data.j$hours_warmuv_200<-data.j$hours_warmuv/200#
+data.j$newFreckArm<-as.factor(ifelse(data.j$freckarm==1|data.j$freckarm==2,0,ifelse(data.j$freckarm==3|data.j$freckarm==4,1,2)))#
+data.j$blisters<-NULL#
+data.j$newFreckArm<-factor(ifelse(data.j$freckarm==1|data.j$freckarm==2,0,ifelse(data.j$freckarm==3|data.j$freckarm==4,1,2)))#
+table(data.j$freckarm,data.j$newFreckArm)#
+data.j$multiplebcc<-NULL#
+#data.j$freckarm<-NULL#
+data.j$bodysite<-as.factor(data.j$bodysite)
+impute.test <- function(x,y,x.test,missing){#
+#
+ if (missing=="no"){#
+    return(x.test)#
+ }#
+ else if (missing=="impute.at.split"){#
+ ## impute the test matrix based on means and mode from training set#
+  for (k in 1:dim(x.test)[2]){#
+    #for categorical outcome, update based on the outcome class#
+    # as well as the observation's node#
+  #  if(is.factor(y)){#
+  #   for(i in levels(y)){#
+  #      x.test[(is.na(x.test[,k])&y.test==i),k] <- ifelse(is.factor(x[,k]),#
+  #      names(which.max(table(x[y==i,k]))),mean(x[y==i,k],na.rm=TRUE))#
+  #      }#
+   # }else {   #
+      x.test[(is.na(x.test[,k])),k] <- ifelse(is.factor(x[,k]),#
+      names(which.max(table(x[,k]))),mean(x[,k],na.rm=TRUE))#
+   # }#
+  }#
+#
+ return(x.test)#
+ }#
+}
