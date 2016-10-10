@@ -229,6 +229,7 @@ partDSA <- function(x, y, wt=rep(1, nrow(x)), x.test=x, y.test=y, wt.test,
     predicted.values.by.tree.permuted <- lapply(tree.results,'[[',6)
     #For partial derivative importance, should be a list of p vectors
     partial.derivative.error <- lapply(tree.results,'[[',7)
+    partial.STEP.derivative.error.ALL <- lapply(tree.results,'[[',8)
     
     first.partition.with.var.on.average <- Reduce("+", first.partition.with.var.by.tree) /
                                            length(first.partition.with.var.by.tree)
@@ -239,6 +240,27 @@ partDSA <- function(x, y, wt=rep(1, nrow(x)), x.test=x, y.test=y, wt.test,
     var.penetrance.list <- as.list(variable.penetrance.on.average)
     partial.derivative.on.average <- Reduce("+", partial.derivative.error) / length(partial.derivative.error)
     partial.derivative.rank <- rank(-1*(partial.derivative.on.average),ties.method="min")
+    
+    partial.STEP.derivative.by.B <- partial.STEP.derivative.by.p.and.k <- partial.STEP.derivative.by.p <- vector("list",ncol(x))
+    num.unique.var.values <- rep(NA_real_,ncol(x)) # vector of length p - housing number of unique values for each variable
+    unique.var.values <- vector("list",ncol(x))   # list of length p of vectors - housing sorted unique values for each variable
+	  diff.unique.var.values <- vector("list",ncol(x)) #list of length p of vectors - housing difference between ordered values of each variable
+
+    B<-length(partial.STEP.derivative.error.ALL)
+    p<-ncol(x)
+    for(j in 1:p){
+    	print("In outer loop - printing j")
+    	unique.var.values[[j]] <- sort(unique(x[,j]))
+  	  num.unique.var.values[j] <- length(unique.var.values[[j]])
+  	  diff.unique.var.values[[j]] <- unique.var.values[[j]][2:num.unique.var.values[j]] - unique.var.values[[j]][1:(num.unique.var.values[j]-1)]
+  	  partial.STEP.derivative.by.B[[j]] <- matrix(NA_real_,B,num.unique.var.values[j]-1)
+	    for(b in 1:B){
+	    	partial.STEP.derivative.by.B[[j]][b,]<-partial.STEP.derivative.error.ALL[[b]][[j]]
+	    }
+	    partial.STEP.derivative.by.p.and.k[[j]]<-((apply(partial.STEP.derivative.by.B[[j]],2,sum)/B)^2)*(diff.unique.var.values[[j]])
+	    partial.STEP.derivative.by.p[[j]] <- sum(partial.STEP.derivative.by.p.and.k[[j]])
+	 	}
+
     
     if (is.factor(y)) { #this is the categorical case
       categorical.results <- categorical.predictions(predicted.values.by.tree=predicted.values.by.tree,
@@ -292,12 +314,14 @@ partDSA <- function(x, y, wt=rep(1, nrow(x)), x.test=x, y.test=y, wt.test,
                       numerical.results[[5]][[2]],
                       numerical.results[[6]][[2]],
                       partial.derivative.on.average,
-                      partial.derivative.rank)
+                      partial.derivative.rank,
+                      partial.STEP.derivative.by.p,
+                      partial.STEP.derivative.by.p.and.k)
 
       names(results) <- list("Training.Set.Error", "Predicted.Training.Set.Values",
                              "Predicted.Test.Set.Values", "Test.Set.Error", "VIMP",
                              "Variable.Penetrance", "Prediction.Rules","Breiman.Training.Error",
-                             "Breiman.Rank","Partial.Derivative.Error","Partial.Derivative.Rank")
+                             "Breiman.Rank","Partial.Derivative.Error","Partial.Derivative.Rank","Partial.STEP.Derivative.Error","Partial.STEP.Derivative.by.Value")
     }
     class(results)<-('LeafyDSA')
   } else if(control$boost == 1 ){  #Start Boosting

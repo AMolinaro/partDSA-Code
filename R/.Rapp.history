@@ -68,3 +68,48 @@ impute.test <- function(x,y,x.test,missing){#
  return(x.test)#
  }#
 }
+p<-10
+vector(p)
+help(vector)
+num.unique.var.values<-NULL
+num.unique.var.values
+num.unique.var.values<-rep(NA,p)
+num.unique.var.values
+num.unique.var.values<-rep(NA_real_,p)
+num.unique.var.values
+try.this<-vector("list",10)
+try.this
+try.this[[8]]<-vector("list",5)
+try.this
+now.this<-lapply(try.this,'[[',8)
+lapply(try.this,'[[',8)
+try.this[[8]]
+lapply(try.this,'[[',3)
+lapply(try.this,'[[',2)
+lapply(try.this,'[[',10)
+lapply(try.this,'[[',7)
+lapply(try.this,'[[',6)
+lapply(try.this,'[[',5)
+tr.this
+try.this
+try.this[[1]][[8]]<-matrix(1,5,5)
+try.this
+for(i in 1:10) try.this[[i]][[8]]<-matrix(i,5,5)
+try.this
+lapply(try.this,'[[',8)
+for(i in 1:10) try.this[[i]][[8]]<-vector(i,5)
+for(i in 1:10) try.this[[i]][[8]]<-rep(i,5)
+try.this
+for(i in 1:10) try.this[[i]][[8]][[1]]<-rep(i,5)
+for(i in 1:10) try.this[[i]][[8]]<-list()
+for(i in 1:10) try.this[[i]][[8]][[1]]<-rep(i,5)
+for(i in 1:10) try.this[[i]][[8]][[1]]<-rep(i+1,5)
+try.this
+for(i in 1:10) try.this[[i]][[8]][[1]]<-rep(i,5)
+for(i in 1:10) try.this[[i]][[8]][[2]]<-rep(i+1,5)
+for(i in 1:10) try.this[[i]][[8]][[3]]<-rep(i+3,5)
+try.this
+now.this<-lapply(try.this,'[[',8)
+now.this
+sum(now.this[[10]][[3]])
+13*5
