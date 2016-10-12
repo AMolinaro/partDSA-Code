@@ -250,10 +250,12 @@ partDSA <- function(x, y, wt=rep(1, nrow(x)), x.test=x, y.test=y, wt.test,
     p<-ncol(x)
     for(j in 1:p){
     	print("In outer loop - printing j")
-    	unique.var.values[[j]] <- sort(unique(x[,j]))
-  	  num.unique.var.values[j] <- length(unique.var.values[[j]])
-  	  diff.unique.var.values[[j]] <- unique.var.values[[j]][2:num.unique.var.values[j]] - unique.var.values[[j]][1:(num.unique.var.values[j]-1)]
-  	  partial.STEP.derivative.by.B[[j]] <- matrix(NA_real_,B,num.unique.var.values[j]-1)
+    	uniq.val.xin<-unique(x[,j])
+  	    quant.uniq.val.xin<-ifelse(length(uniq.val.xin)>=10,quantile(uniq.val.xin,seq(0,1,.1)),uniq.val.xin)
+  	    unique.var.values[[j]] <- sort(quant.uniq.val.xin)
+  	    num.unique.var.values[j] <- length(unique.var.values[[j]])
+  	    diff.unique.var.values[[j]] <- unique.var.values[[j]][2:num.unique.var.values[j]] - unique.var.values[[j]][1:(num.unique.var.values[j]-1)]
+  	    partial.STEP.derivative.by.B[[j]] <- matrix(NA_real_,B,num.unique.var.values[j]-1)
 	    for(b in 1:B){
 	    	partial.STEP.derivative.by.B[[j]][b,]<-partial.STEP.derivative.error.ALL[[b]][[j]]
 	    }

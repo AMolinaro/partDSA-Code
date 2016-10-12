@@ -130,7 +130,9 @@ worker.leafy <- function(tree.num, minsplit, minbuck, cut.off.growth, MPD, missi
   unique.var.values <- vector("list",p)   # list of length p of vectors - housing sorted unique values for each variable
   diff.unique.var.values <- vector("list",p) #list of length p of vectors - housing difference between ordered values of each variable
   for(j in 1:p){
-  	unique.var.values[[j]] <- sort(unique(x.in[,j]))
+  	uniq.val.xin<-unique(x.in[,j])
+  	quant.uniq.val.xin<-ifelse(length(uniq.val.xin)>=10,quantile(uniq.val.xin,seq(0,1,.1)),uniq.val.xin)
+  	unique.var.values[[j]] <- sort(quant.uniq.val.xin)
   	num.unique.var.values[j] <- length(unique.var.values[[j]])
   	diff.unique.var.values[[j]] <- unique.var.values[[j]][2:num.unique.var.values[j]] - unique.var.values[[j]][1:(num.unique.var.values[j]-1)]
   }  
