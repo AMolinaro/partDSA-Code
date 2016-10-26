@@ -317,7 +317,7 @@ partDSA <- function(x, y, wt=rep(1, nrow(x)), x.test=x, y.test=y, wt.test,
                       numerical.results[[6]][[2]],
                       partial.derivative.on.average,
                       partial.derivative.rank,
-                      partial.STEP.derivative.by.p,
+                      unlist(partial.STEP.derivative.by.p),
                       partial.STEP.derivative.by.p.and.k)
 
       names(results) <- list("Training.Set.Error", "Predicted.Training.Set.Values",

@@ -109,7 +109,8 @@ worker.leafy <- function(tree.num, minsplit, minbuck, cut.off.growth, MPD, missi
     pred.oob.DSA.sorted[[j]][,i] <- pred.oob.DSA.sort
     }
   }
-
+    print("Original partial derivative part")
+    
 #Here actually calculate the partial derivative errors   
 
   partial.derivative.error <- rep(0,p)
@@ -130,9 +131,14 @@ worker.leafy <- function(tree.num, minsplit, minbuck, cut.off.growth, MPD, missi
   unique.var.values <- vector("list",p)   # list of length p of vectors - housing sorted unique values for each variable
   diff.unique.var.values <- vector("list",p) #list of length p of vectors - housing difference between ordered values of each variable
   for(j in 1:p){
-  	uniq.val.xin<-unique(x.in[,j])
-  	quant.uniq.val.xin<-ifelse(length(uniq.val.xin)>=10,quantile(uniq.val.xin,seq(0,1,.1)),uniq.val.xin)
-  	unique.var.values[[j]] <- sort(quant.uniq.val.xin)
+      uniq.val.xin<-unique(x.in[,j])
+      print(paste("length(uniq.val.xin)=",length(uniq.val.xin)))
+      print(paste("uniq.val.xin",uniq.val.xin))
+      if(length(uniq.val.xin)>=10) quant.uniq.val.xin <- quantile(uniq.val.xin,probs=seq(0,1,.1)) else quant.uniq.val.xin <- uniq.val.xin
+#      quant.uniq.val.xin<-ifelse(length(uniq.val.xin)>=10,quantile(uniq.val.xin,probs=seq(0,1,.1)),uniq.val.xin)
+      print(paste("quant.uniq.val.xin",quant.uniq.val.xin))
+      unique.var.values[[j]] <- sort(quant.uniq.val.xin)
+        print(paste("unique var values",unique.var.values[[j]]))
   	num.unique.var.values[j] <- length(unique.var.values[[j]])
   	diff.unique.var.values[[j]] <- unique.var.values[[j]][2:num.unique.var.values[j]] - unique.var.values[[j]][1:(num.unique.var.values[j]-1)]
   }  
@@ -152,17 +158,20 @@ worker.leafy <- function(tree.num, minsplit, minbuck, cut.off.growth, MPD, missi
     pred.oob.DSA.sorted[[j]][,k] <- pred.oob.DSA.sort
     }
   }
-
+    print("Step partial derivative part")
 #Here actually calculate the partial derivative errors   
-
+    print(paste("unique values for all variables=",num.unique.var.values))
+        
   partial.STEP.derivative.error <- vector("list",p) # vector of length p - housing error for each value of each variable
   
   for(j in 1:p){
     print("In inner loop - printing j")
     partial.STEP.derivative.error[[j]]<- rep(NA_real_,num.unique.var.values[j]-1)
     for(k in 1:(num.unique.var.values[j]-1)){
+        print(paste("k=",k," unique.values=",num.unique.var.values[j]))
       partial.STEP.derivative.error[[j]][k] <- (sum(pred.oob.DSA.sorted[[j]][,(k+1)]-pred.oob.DSA.sorted[[j]][,k]))/(n.oob*diff.unique.var.values[[j]][k])
     }
+    print("End of loop")
   }
 
 # Return partial STEP derivative error is a list of length p - each element of which is a vector of length m_j
