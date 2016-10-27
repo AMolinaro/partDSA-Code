@@ -249,7 +249,6 @@ partDSA <- function(x, y, wt=rep(1, nrow(x)), x.test=x, y.test=y, wt.test,
     B<-length(partial.STEP.derivative.error.ALL)
     p<-ncol(x)
     for(j in 1:p){
-    	print("In outer loop - printing j")
     	uniq.val.xin<-unique(x[,j])
   	    #quant.uniq.val.xin<-ifelse(length(uniq.val.xin)>=10,quantile(uniq.val.xin,seq(0,1,.1)),uniq.val.xin)
   	     if(length(uniq.val.xin)>=10) quant.uniq.val.xin <- quantile(uniq.val.xin,probs=seq(0,1,.1)) else quant.uniq.val.xin <- uniq.val.xin
