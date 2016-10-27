@@ -251,7 +251,8 @@ partDSA <- function(x, y, wt=rep(1, nrow(x)), x.test=x, y.test=y, wt.test,
     for(j in 1:p){
     	print("In outer loop - printing j")
     	uniq.val.xin<-unique(x[,j])
-  	    quant.uniq.val.xin<-ifelse(length(uniq.val.xin)>=10,quantile(uniq.val.xin,seq(0,1,.1)),uniq.val.xin)
+  	    #quant.uniq.val.xin<-ifelse(length(uniq.val.xin)>=10,quantile(uniq.val.xin,seq(0,1,.1)),uniq.val.xin)
+  	     if(length(uniq.val.xin)>=10) quant.uniq.val.xin <- quantile(uniq.val.xin,probs=seq(0,1,.1)) else quant.uniq.val.xin <- uniq.val.xin
   	    unique.var.values[[j]] <- sort(quant.uniq.val.xin)
   	    num.unique.var.values[j] <- length(unique.var.values[[j]])
   	    diff.unique.var.values[[j]] <- unique.var.values[[j]][2:num.unique.var.values[j]] - unique.var.values[[j]][1:(num.unique.var.values[j]-1)]
