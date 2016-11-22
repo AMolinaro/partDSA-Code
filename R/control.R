@@ -3,7 +3,7 @@ DSA.control <- function(vfold=10, minsplit=20 , minbuck=round(minsplit/3),  cut.
                         wt.method="KM", brier.vec=NULL,
                         leafy=0, leafy.random.num.variables.per.split=4,
                         leafy.num.trees=50, leafy.subsample=0, save.input=FALSE, 
-                        boost=0, boost.num.trees=50, cox.vec=NULL, IBS.wt=NULL) {
+                        boost=0, boost.num.rounds=100, cox.vec=NULL, IBS.wt=NULL) {
   if (leafy == 1 && (!is.wholenumber(leafy.num.trees)))
     stop('The number of trees must be a whole number')
 
@@ -65,5 +65,5 @@ DSA.control <- function(vfold=10, minsplit=20 , minbuck=round(minsplit/3),  cut.
        wt.method=wt.method, brier.vec=brier.vec, cox.vec=cox.vec, IBS.wt=IBS.wt, leafy=leafy, 
        leafy.random.num.variables.per.split=leafy.random.num.variables.per.split,
        leafy.num.trees=leafy.num.trees, leafy.subsample=leafy.subsample,
-       boost=boost, boost.num.trees=boost.num.trees,save.input=save.input)
+       boost=boost, boost.num.rounds=boost.num.rounds,save.input=save.input)
 }
