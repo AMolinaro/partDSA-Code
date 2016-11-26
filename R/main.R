@@ -328,57 +328,10 @@ partDSA <- function(x, y, wt=rep(1, nrow(x)), x.test=x, y.test=y, wt.test,
     class(results)<-('LeafyDSA')
   } else if(control$boost == 1 ){  #Start Boosting
 
-      training.data <- x
-      training.y <- y
-      training.truth <- y
-      test.data <- x.test
-      test.y <- y.test
-      test.truth <- y.test
-      boost.rounds <- control$boost.num.rounds
-      mpd <- MPD
-      seed <- 5139
-      run <- boosting(training.data=training.data,training.y=training.y,training.truth=training.truth,test.data=test.data,test.y=test.y,test.truth=test.truth,boost.rounds=boost.rounds,,mpd=mpd,seed=seed)
-      results <- list(run$ErrorToTruthCurrent,run$boost.5part,run$boost.5rounds)
-      names(results) <- list("Final.Test.Set.Error","Number.Boosting.Trees","Number.Boosting.Rounds")
-      class(results)<-('BoostDSA')
-      
-#  		boost.num.trees<-control$boost.num.trees
-#  		boost.out <- matrix(0,nrow=nrow(x),ncol=boost.num.trees)
-#  		boost.models<-vector("list",boost.num.trees)
-#  		resids.sum <- NULL
-#  		resids<-y
-#  		for(i in 1:boost.num.trees){
-#  			boost.models[[i]]<-rss.dsa(x=x, y=resids, wt=wt, minsplit=minsplit, minbuck=minbuck,
-#                        cut.off.growth=cut.off.growth, MPD=MPD,missing=missing,
-#                        loss.function=loss.function, control=control,
-#                        wt.method=wt.method, brier.vec=brier.vec, cox.vec=cox.vec, IBS.wt=IBS.wt)
-#         boost.models[[i]]$pred.test.set.DSA <- predict(boost.models[[i]], x)
-#			boost.out[,i]<-boost.models[[i]]$pred.test.set.DSA[,cut.off.growth]
-#			resids <- (resids - boost.out[,i])
-#			resids.sum[i] <- sum(resids^2)
-#  		}
-#  		### Predicted Values
-#  		y.hat.train <- y - resids
-#  		if(!is.null(x.test)){  # For future prediction
-#  			y.hat.test<-rep(0,nrow=x.test)
-#  			test.set.error <- NULL
-#  			for(i in 1:boost.num.trees){
-#  				 y.hat.test <- y.hat.test +  predict(boost.models[[i]], x.test)[,cut.off.growth]
-#  				 test.set.error[i]<-sum((y.test - y.hat.test)^2)
-#  			}
-#  		}
-#  	   results <- list(resids.sum,
-#                      boost.models,
-#                      y.hat.train,
-#                      y.hat.test,
-#                      test.set.error,
-#                      test.set.error[boost.num.trees])
-#
-#      names(results) <- list("Training.Set.Errors", "Training.Set.Models", 
-#      								 "Predicted.Train.Set.Values", 
-#                             "Predicted.Test.Set.Values", "Test.Set.Errors", "Final.Test.Set.Error")
-#      class(results)<-('BoostDSA')
-#
+      run.cv <- cv.boosting(training.data=x,training.y=y,wt=control$wt,control=control)
+      control$cut.off.growth <- run.cv$boost.5part
+      control$boost.rounds <- run.cv$boost.5rounds
+      results <- run.boosting(x=x,y=y,wt=wt,x.test=x.test,y.test=y.test,control=control)
     } else {   # Begin partDSA
     # Only do cross validation if vfold > 1
     if (vfold > 1) {  #partDSA with cross-validation	
