@@ -327,8 +327,7 @@ partDSA <- function(x, y, wt=rep(1, nrow(x)), x.test=x, y.test=y, wt.test,
     }
     class(results)<-('LeafyDSA')
   } else if(control$boost == 1 ){  #Start Boosting
-
-      run.cv <- cv.boosting(training.data=x,training.y=y,wt=control$wt,control=control)
+      run.cv <- cv.boosting(training.data=x,training.y=y,wt=wt,control=control)
       control$cut.off.growth <- run.cv$boost.5part
       control$boost.rounds <- run.cv$boost.5rounds
       results <- run.boosting(x=x,y=y,wt=wt,x.test=x.test,y.test=y.test,control=control)
