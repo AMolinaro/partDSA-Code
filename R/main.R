@@ -244,24 +244,26 @@ partDSA <- function(x, y, wt=rep(1, nrow(x)), x.test=x, y.test=y, wt.test,
     partial.STEP.derivative.by.B <- partial.STEP.derivative.by.p.and.k <- partial.STEP.derivative.by.p <- vector("list",ncol(x))
     num.unique.var.values <- rep(NA_real_,ncol(x)) # vector of length p - housing number of unique values for each variable
     unique.var.values <- vector("list",ncol(x))   # list of length p of vectors - housing sorted unique values for each variable
-	  diff.unique.var.values <- vector("list",ncol(x)) #list of length p of vectors - housing difference between ordered values of each variable
+#	  diff.unique.var.values <- vector("list",ncol(x)) #list of length p of vectors - housing difference between ordered values of each variable
 
     B<-length(partial.STEP.derivative.error.ALL)
     p<-ncol(x)
     for(j in 1:p){
     	uniq.val.xin<-unique(x[,j])
   	    #quant.uniq.val.xin<-ifelse(length(uniq.val.xin)>=10,quantile(uniq.val.xin,seq(0,1,.1)),uniq.val.xin)
-  	     if(length(uniq.val.xin)>=10) quant.uniq.val.xin <- quantile(uniq.val.xin,probs=seq(0,1,.1)) else quant.uniq.val.xin <- uniq.val.xin
-  	    unique.var.values[[j]] <- sort(quant.uniq.val.xin)
-  	    num.unique.var.values[j] <- length(unique.var.values[[j]])
-  	    diff.unique.var.values[[j]] <- unique.var.values[[j]][2:num.unique.var.values[j]] - unique.var.values[[j]][1:(num.unique.var.values[j]-1)]
-  	    partial.STEP.derivative.by.B[[j]] <- matrix(NA_real_,B,num.unique.var.values[j]-1)
-	    for(b in 1:B){
-	    	partial.STEP.derivative.by.B[[j]][b,]<-partial.STEP.derivative.error.ALL[[b]][[j]]
-	    }
-	    partial.STEP.derivative.by.p.and.k[[j]]<-((apply(partial.STEP.derivative.by.B[[j]],2,sum)/B)^2)*(diff.unique.var.values[[j]])
-	    partial.STEP.derivative.by.p[[j]] <- sum(partial.STEP.derivative.by.p.and.k[[j]])
-	 	}
+        if(length(uniq.val.xin)>=10 && !is.null(control$partial) && control$partial=="deciles") quant.uniq.val.xin <- quantile(uniq.val.xin,probs=seq(0,1,.1))
+        else quant.uniq.val.xin <- uniq.val.xin
+        unique.var.values[[j]] <- sort(quant.uniq.val.xin)
+        num.unique.var.values[j] <- length(unique.var.values[[j]])
+#  	    diff.unique.var.values[[j]] <- unique.var.values[[j]][2:num.unique.var.values[j]] - unique.var.values[[j]][1:(num.unique.var.values[j]-1)]
+        partial.STEP.derivative.by.B[[j]] <- matrix(NA_real_,B,num.unique.var.values[j]-1)
+        for(b in 1:B){
+            partial.STEP.derivative.by.B[[j]][b,]<-partial.STEP.derivative.error.ALL[[b]][[j]]
+        }
+        partial.STEP.derivative.by.p.and.k[[j]]<-apply(partial.STEP.derivative.by.B[[j]],2,sum)/B
+#        partial.STEP.derivative.by.p.and.k[[j]]<-((apply(partial.STEP.derivative.by.B[[j]],2,sum)/B)^2)*(diff.unique.var.values[[j]])        
+        partial.STEP.derivative.by.p[[j]] <- sum(partial.STEP.derivative.by.p.and.k[[j]])/(num.unique.var.values[j]-1)
+    }
 
     
     if (is.factor(y)) { #this is the categorical case

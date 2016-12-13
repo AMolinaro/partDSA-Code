@@ -128,14 +128,15 @@ worker.leafy <- function(tree.num, minsplit, minbuck, cut.off.growth, MPD, missi
   pred.oob.DSA.sorted <- vector("list",p) # list of length p - housing matrices - each matrix is n.oob by m_j  - HAVE NOT RENAMED this variable - will need to if need predicted values to be returned by function
   num.unique.var.values <- rep(NA_real_,p) # vector of length p - housing number of unique values for each variable
   unique.var.values <- vector("list",p)   # list of length p of vectors - housing sorted unique values for each variable
-  diff.unique.var.values <- vector("list",p) #list of length p of vectors - housing difference between ordered values of each variable
+#  diff.unique.var.values <- vector("list",p) #list of length p of vectors - housing difference between ordered values of each variable
   for(j in 1:p){
       uniq.val.xin<-unique(x.in[,j])
-      if(length(uniq.val.xin)>=10) quant.uniq.val.xin <- quantile(uniq.val.xin,probs=seq(0,1,.1)) else quant.uniq.val.xin <- uniq.val.xin
+      if(length(uniq.val.xin)>=10 && !is.null(control$partial) && control$partial=="deciles") quant.uniq.val.xin <- quantile(uniq.val.xin,probs=seq(0,1,.1))
+      else quant.uniq.val.xin <- uniq.val.xin
 #      quant.uniq.val.xin<-ifelse(length(uniq.val.xin)>=10,quantile(uniq.val.xin,probs=seq(0,1,.1)),uniq.val.xin)
       unique.var.values[[j]] <- sort(quant.uniq.val.xin)
   	num.unique.var.values[j] <- length(unique.var.values[[j]])
-  	diff.unique.var.values[[j]] <- unique.var.values[[j]][2:num.unique.var.values[j]] - unique.var.values[[j]][1:(num.unique.var.values[j]-1)]
+#  	diff.unique.var.values[[j]] <- unique.var.values[[j]][2:num.unique.var.values[j]] - unique.var.values[[j]][1:(num.unique.var.values[j]-1)]
   }  
   for(j in 1:p){
     pred.oob.DSA.sorted[[j]] <- matrix(NA_real_,n.oob,num.unique.var.values[j])
@@ -159,7 +160,8 @@ worker.leafy <- function(tree.num, minsplit, minbuck, cut.off.growth, MPD, missi
   for(j in 1:p){
     partial.STEP.derivative.error[[j]]<- rep(NA_real_,num.unique.var.values[j]-1)
     for(k in 1:(num.unique.var.values[j]-1)){
-      partial.STEP.derivative.error[[j]][k] <- (sum(pred.oob.DSA.sorted[[j]][,(k+1)]-pred.oob.DSA.sorted[[j]][,k]))/(n.oob*diff.unique.var.values[[j]][k])
+        partial.STEP.derivative.error[[j]][k] <- sum((pred.oob.DSA.sorted[[j]][,(k+1)]-pred.oob.DSA.sorted[[j]][,k])^2)/n.oob
+#      partial.STEP.derivative.error[[j]][k] <- (sum(pred.oob.DSA.sorted[[j]][,(k+1)]-pred.oob.DSA.sorted[[j]][,k]))/(n.oob*diff.unique.var.values[[j]][k])        
     }
   }
 
