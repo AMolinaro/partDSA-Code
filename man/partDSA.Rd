@@ -23,7 +23,7 @@ DSA.control(vfold=10, minsplit = 20, minbuck=round(minsplit/3),
                         loss.function="default", wt.method="KM", brier.vec=NULL,
                         leafy=0, leafy.random.num.variables.per.split=4,
                         leafy.num.trees=50, leafy.subsample=0, save.input=FALSE, 
-                        boost=0, boost.num.trees=50, cox.vec=NULL, IBS.wt=NULL)
+                        boost=0, boost.rounds=100, cox.vec=NULL,IBS.wt=NULL, partial=NULL)
 }
 \arguments{
 \item{x}{The matrix or data frame of predictor variables for the training set,
@@ -91,7 +91,10 @@ DSA.control(vfold=10, minsplit = 20, minbuck=round(minsplit/3),
  in the object returned by partDSA.  If \code{FALSE}, \code{x} and \code{y}
  are set to \code{NULL}.  The default value is \code{FALSE}.}
 \item{boost}{Not documented yet.}
-\item{boost.num.trees}{Not documented yet.}
+\item{boost.rounds}{Maximum number of rounds of boosting.  Default is
+100.}
+\item{partial}{If set to "deciles," step partial importance is computed
+        on deciles of data rather than actual data.}
 }
 \details{
 \code{missing} set to "no" indicates that there is no missing data and
